@@ -1,0 +1,46 @@
+#create simple app as main.go
+package main
+
+import (
+    "fmt"
+    "log"
+    "net/http"
+)
+
+func main() {
+    http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+        fmt.Fprintf(w, "Hello, World!")
+    })
+
+    log.Fatal(http.ListenAndServe(":8080", nil))
+}
+
+
+#create Dockerfile
+FROM golang:alpine
+COPY main.go /go/src/app/
+WORKDIR /go/src/app/
+RUN go mod init
+RUN go get -d -v ./...
+RUN go install -v ./...
+EXPOSE 8080
+CMD ["go", "run", "main.go"]
+
+#build image 
+ docker build -t demo-go-app .
+
+#run the app
+docker run -p 8080:8080 demo-go-app
+
+#test endpoint
+curl --location --request GET 'http://localhost:8080/'
+
+#tag image with v1
+docker tag demo-go-app psp360/demo-go-app:v1
+
+#history
+docker history demo-go-ap
+
+#push image to dockerhub
+docker login
+docker push  psp360/demo-go-app:v1
