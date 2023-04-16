@@ -1,0 +1,12 @@
+#create app, main.go
+
+#create multistage Dockerfile.multistage
+
+# build image 
+docker build --rm -t demo-go-app:multistage -f Dockerfile.multistage .
+
+#tag the image 
+docker tag demo-go-app psp360/demo-go-app:multistage
+
+# push the image
+docker push psp360/demo-go-app:multistage
