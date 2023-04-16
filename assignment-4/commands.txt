@@ -1,0 +1,20 @@
+#create
+docker volume create shared_volume
+
+#list all 
+docker volume ls
+
+#mount 
+docker run -d -p 8080:8080 --name demo-go-app-with-volume -v shared_volume:/go/src/app/data  demo-go-app
+
+#details
+docker volume inspect shared_volume
+
+#create file
+docker exec -it f588291e892f sh
+> cd / && cd go/src/app/data/
+> touch test.txt
+
+#verify file created
+minikube ssh
+> ls /var/lib/docker/volumes/shared_volume/_data
