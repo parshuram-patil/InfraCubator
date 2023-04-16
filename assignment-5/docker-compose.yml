@@ -1,0 +1,14 @@
+version: '3'
+services:
+  app:
+    container_name: demo-go-app
+    image: demo-go-app
+    build:
+      context: .
+      dockerfile: Dockerfile.multistage
+    ports:
+      - "8080:8080"
+    volumes:
+      - vote_volume:/app/data
+volumes:
+  vote_volume:

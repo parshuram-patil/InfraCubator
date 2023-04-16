@@ -1,0 +1,20 @@
+#create app with /vote endpoint -  main.go
+
+#create docker compose file
+
+#run 
+docker-compose up -d
+
+
+#health check
+curl --location --request GET 'http://192.168.65.2:8080/'
+
+#vote API
+curl --location --request POST 'http://192.168.65.2:8080/vote' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "name": "Parshuram"
+}'
+
+# stop app
+docker-compose down
