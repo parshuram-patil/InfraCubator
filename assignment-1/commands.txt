@@ -1,0 +1,12 @@
+# start nginx container and forward port to 81
+docker run --name my-nginx-container -d -p 80:81 nginx
+
+#Print real time logs
+docker logs -f fbfc0a2fb26a
+
+#Enter a running container and get a shell prompt inside it
+docker exec -it fbfc0a2fb26 bash
+
+#stop the container
+docker stop fbfc0a2fb26
+
