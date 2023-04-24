@@ -7,7 +7,7 @@ RUN go install -v ./...
 RUN go build -o demo-go-app
 
 
-FROM build-stage AS run-stage
+FROM golang:latest AS run-stage
 WORKDIR /app
 COPY --from=build-stage /go/src/app/demo-go-app /app
 CMD ["./demo-go-app"]

@@ -2,11 +2,15 @@
 docker run --name my-nginx-container -d -p 80:81 nginx
 
 #Print real time logs
-docker logs -f fbfc0a2fb26a
+docker logs -f my-nginx-container
 
 #Enter a running container and get a shell prompt inside it
-docker exec -it fbfc0a2fb26 bash
+docker exec -it my-nginx-container bash
 
 #stop the container
-docker stop fbfc0a2fb26
+docker stop my-nginx-container
+
+
+--------
+1. It is always better to use docker names instead of Ids
 
