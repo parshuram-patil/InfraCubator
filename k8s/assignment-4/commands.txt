@@ -1,0 +1,42 @@
+
+#create mongo pod definition - mongo-pod.yaml
+
+#create mongo db instance
+kubectl create -f mongo-pod.yaml
+
+#create mongo ClusterIp Service definition - mongo-service.yaml
+
+#create mongo service
+kubectl create -f mongo-service.yaml
+
+#create metadata pod definition - metadata-pod.yaml
+
+#create metadata service db instance
+kubectl create -f metadata-pod.yaml
+
+#create NodePort Service definition - metadata-nodeport.yaml
+
+#create nodeport service for metadata app
+kubectl create -f metadata-nodeport.yaml
+
+#pod verification - check for running status
+kubectl get pods
+
+#service verification - correct port forwarding
+kubectl get services
+
+#find service url that points the metadata app
+minikube service --url metadataservice-nodeport
+
+#access endpoint
+#create metadata
+curl --location 'http://192.168.65.6:30000/metadata' \
+--header 'Content-Type: application/json' \
+--data '{
+    "group": "parshuram",
+    "name": "city",
+    "value": "Pune"
+}'
+
+#get all metadata
+curl --location 'http://192.168.65.6:30000/metadata'
