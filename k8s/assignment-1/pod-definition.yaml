@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: metadataservice
+  name: metadataservice
+spec:
+  containers:
+  - image: luckyganesh/metadata-service:v1
+    name: metadataservice
+    ports:
+    - containerPort: 8080
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}

@@ -1,0 +1,27 @@
+
+#Create pod definition file
+kubectl run metadataservice --image luckyganesh/metadata-service:v1 --port 8080  --dry-run=client -o yaml > pod-definition.yaml
+
+#create pod from definition
+kubectl create -f pod-definition.yaml
+
+#get pods details to find IP
+kubectl get pod metadataservice -o wide
+
+#go inside minimum/k8s node
+minikube ssh
+
+#verify app is running
+curl --location 'http://10.244.0.33:8080/metadata'
+
+#exiting from k8s node
+Exit
+
+#describe pod to get more details
+kubectl describe pods metadataservice
+
+#go inside pods container
+kubectl exec -it metadataservice -- /bin/sh
+
+#exiting container
+Exit
