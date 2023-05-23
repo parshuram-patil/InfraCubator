@@ -1,0 +1,22 @@
+
+#make sure metadata service is up running(use assigment 2)
+
+#create NodePort Service
+kubectl create -f nodeport-definition.yaml
+
+#descript NodPort service and check if endpoint is mapped
+kubectl describe service metadataservice-nodeport
+
+#find minikube ip
+minikube ip
+
+#access endpoints using host(minikube) IP and nodePort from def file
+curl --location 'http://192.168.65.6:30000/metadata' \
+--header 'Content-Type: application/json' \
+--data '{
+    "group": "parshuram",
+    "name": "city",
+    "value": "Pune"
+}'
+
+curl --location 'http://192.168.65.6:30000/metadata'
