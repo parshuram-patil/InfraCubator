@@ -1,0 +1,36 @@
+# Compiled files
+*.class
+*.jar
+*.war
+*.ear
+
+# Dependencies
+/target/
+/node_modules/
+
+# IDE specific files
+.idea/
+.vscode/
+*.iml
+
+# Build output
+/build/
+/out/
+/bin/
+/dist/
+
+# Logs
+/log/
+/logs/
+
+# Temporary files
+*.tmp
+
+# Package files
+*.zip
+*.tar.gz
+*.tar
+
+# Miscellaneous
+.DS_Store
+Thumbs.db
