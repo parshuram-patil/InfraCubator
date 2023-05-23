@@ -1,0 +1,30 @@
+
+#Create replicaset defination
+replicaset-definition.yaml
+
+#create replicaset
+kubectl create -f replicaset-definition.yaml
+
+#get pod under replica set using label selector
+kubectl get pods -l type=back-end
+
+#find pod ip under replicaset(metadataservice-rc-wpz7n is pad name from above cmd)
+kubectl get pod metadataservice-rc-wpz7n -o wide
+
+#go inside minimum/k8s node
+minikube ssh
+
+#create metadata
+curl --location 'http://10.244.0.37:8080/metadata' \
+--header 'Content-Type: application/json' \
+--data '{
+    "group": "parshuram",
+    "name": "city",
+    "value": "Pune"
+}'
+
+#verify created metadata
+curl --location 'http://10.244.0.37:8080/metadata'
+
+#exiting from k8s node
+Exit
