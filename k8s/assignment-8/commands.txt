@@ -1,4 +1,5 @@
 
+#create ConfigMap to store MongoDb url - mongo-config.yaml
 #create persistent volume definition - mongo-pv.yaml
 #   we should specify storageClassName at least to standard if we are using pcv
 #   if we do not specify any storageClassName, it takes empty string as value for storageClassName and claim will not be attached
@@ -6,9 +7,10 @@
 #   if we do not specify any class it sets to standard
 #create mongo db service definition - mongo-service.yaml
 #create mongo db deployment definition with volumes - mongo-deployment.yaml
-#create metadata deployment definition - metadata-deployment.yaml
+#create metadata deployment definition using mongo config - metadata-deployment.yaml
 #create metadata NodePort definition - metadata-nodeport.yaml
 
+kubectl create -f mongo-config.yaml
 kubectl create -f mongo-pv.yaml
 kubectl create -f mongo-pvc.yaml
 kubectl create -f mongo-service.yaml
@@ -22,25 +24,5 @@ kubectl get all
 #find service url that points the metadata app
 minikube service --url metadataservice-nodeport
 
-#using service url create and get the data
-curl --location 'http://192.168.65.6:30000/metadata' \
---header 'Content-Type: application/json' \
---data '{
-    "group": "parshuram",
-    "name": "city",
-    "value": "Pune"
-}'
-curl --location 'http://192.168.65.6:30000/metadata'
-
-#delete mongo deployment
-kubectl delete deployments.apps mongo
-
-#try get the previously created data, it will get the error as DB is down
-#   it will give error, db is nto available
-curl --location 'http://192.168.65.6:30000/metadata'
-
-#recreate mongo deployment
-kubectl create -f mongo-deployment.yaml
-
-#get the data, should return previous data as we have mounted volume, and it is persistent storage
+#get the data, should return previous data as we have persistent storage
 curl --location 'http://192.168.65.6:30000/metadata'
