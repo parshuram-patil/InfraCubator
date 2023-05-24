@@ -1,0 +1,31 @@
+
+#encode mongo db uri
+echo -n mongodb://mongo/metadata | base64
+
+#create Secret to store encoded MongoDb url - mongo-secret.yaml
+#create persistent volume definition - mongo-pv.yaml
+#   we should specify storageClassName at least to standard if we are using pcv
+#   if we do not specify any storageClassName, it takes empty string as value for storageClassName and claim will not be attached
+#create persistent volume claim definition - mongo-pvc.yaml
+#   if we do not specify any class it sets to standard
+#create mongo db service definition - mongo-service.yaml
+#create mongo db deployment definition with volumes - mongo-deployment.yaml
+#create metadata deployment definition using mongo secret - metadata-deployment.yaml
+#create metadata NodePort definition - metadata-nodeport.yaml
+
+kubectl create -f mongo-secret.yaml
+kubectl create -f mongo-pv.yaml
+kubectl create -f mongo-pvc.yaml
+kubectl create -f mongo-service.yaml
+kubectl create -f mongo-deployment.yaml
+kubectl create -f metadata-deployment.yaml
+kubectl create -f metadata-nodeport.yaml
+
+#verify deployed resources - Deployments(mongo, metadataservice), Services(NodePort, ClusterIP)
+kubectl get all
+
+#find service url that points the metadata app
+minikube service --url metadataservice-nodeport
+
+#get the data, should return previous data as we have persistent storage
+curl --location 'http://192.168.65.6:30000/metadata'
