@@ -1,5 +1,5 @@
 resource "aws_vpc" "WebServerVPC" {
-  cidr_block = "10.0.0.0/16"
+  cidr_block = var.WebServerVpcCidrBlock
   tags =  merge(local.common_tags, {
     Name = "web-server-vpc"
   })
@@ -11,7 +11,7 @@ data "aws_availability_zones" "AvailableZones" {
 
 resource "aws_subnet" "WebServerPublicSubnet" {
   vpc_id     = aws_vpc.WebServerVPC.id
-  cidr_block = "10.0.1.0/24"
+  cidr_block = var.WebServerPublicSubnetCidrBlock
   availability_zone = data.aws_availability_zones.AvailableZones.names[0]
   map_public_ip_on_launch = true
   tags =  merge(local.common_tags, {
@@ -29,7 +29,7 @@ resource "aws_internet_gateway" "WebServerInternetGateway" {
 resource "aws_route_table" "WebServerPublicRouteTable" {
   vpc_id = aws_vpc.WebServerVPC.id
   route {
-    cidr_block = "0.0.0.0/0"
+    cidr_block = var.AnyIpCidrBlock
     gateway_id = aws_internet_gateway.WebServerInternetGateway.id
   }
   tags =  merge(local.common_tags, {
@@ -78,6 +78,6 @@ resource "aws_security_group" "HttpOnlySecurityGroup" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [var.AnyIpCidrBlock]
   }
 }
