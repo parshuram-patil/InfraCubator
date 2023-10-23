@@ -46,6 +46,7 @@ resource "aws_instance" "WebServer" {
   instance_type = var.WebServerInstanceType
   subnet_id     = aws_subnet.WebServerPublicSubnet.id
   key_name      = aws_key_pair.WebServerRouteKeyPair.key_name
+  vpc_security_group_ids = [aws_security_group.HttpOnlySecurityGroup.id]
   user_data = <<-EOF
               #!/bin/bash
               yum update -y
@@ -54,4 +55,17 @@ resource "aws_instance" "WebServer" {
               systemctl enable httpd
               echo "<h1>Hello from Web Server provisioned by Terraform</h1>" > /var/www/html/index.html
               EOF
+}
+
+resource "aws_security_group" "HttpOnlySecurityGroup" {
+  name        = "http-only-security-group"
+  description = "Security group that allows incoming HTTP traffic on port 80"
+
+  vpc_id = aws_vpc.WebServerVPC.id
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }
