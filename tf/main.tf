@@ -1,7 +1,7 @@
 resource "aws_vpc" "WebServerVPC" {
   cidr_block = "10.0.0.0/16"
   tags =  merge(local.common_tags, {
-    Name = "WebServerVPC"
+    Name = "web-server-vpc"
   })
 }
 
@@ -15,12 +15,15 @@ resource "aws_subnet" "WebServerPublicSubnet" {
   availability_zone = data.aws_availability_zones.AvailableZones.names[0]
   map_public_ip_on_launch = true
   tags =  merge(local.common_tags, {
-    Name = "WebServerPublicSubnet"
+    Name = "web-server-public-subnet"
   })
 }
 
 resource "aws_internet_gateway" "WebServerInternetGateway" {
   vpc_id = aws_vpc.WebServerVPC.id
+  tags =  merge(local.common_tags, {
+    Name = "web-server-ig"
+  })
 }
 
 resource "aws_route_table" "WebServerPublicRouteTable" {
@@ -29,6 +32,9 @@ resource "aws_route_table" "WebServerPublicRouteTable" {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.WebServerInternetGateway.id
   }
+  tags =  merge(local.common_tags, {
+    Name = "web-server-route-table"
+  })
 }
 
 resource "aws_route_table_association" "WebServerRouteAssociation" {
@@ -39,6 +45,9 @@ resource "aws_route_table_association" "WebServerRouteAssociation" {
 resource "aws_key_pair" "WebServerRouteKeyPair" {
   key_name   = "WebServerRouteKeyPair"
   public_key = var.WebServerPublicKey
+  tags =  merge(local.common_tags, {
+    Name = "web-server-key-pair"
+  })
 }
 
 resource "aws_instance" "WebServer" {
@@ -55,6 +64,9 @@ resource "aws_instance" "WebServer" {
               systemctl enable httpd
               echo "<h1>Hello from Web Server provisioned by Terraform</h1>" > /var/www/html/index.html
               EOF
+  tags =  merge(local.common_tags, {
+    Name = "web-server"
+  })
 }
 
 resource "aws_security_group" "HttpOnlySecurityGroup" {
