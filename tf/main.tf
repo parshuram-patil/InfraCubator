@@ -40,3 +40,18 @@ resource "aws_key_pair" "WebServerRouteKeyPair" {
   key_name   = "WebServerRouteKeyPair"
   public_key = var.WebServerPublicKey
 }
+
+resource "aws_instance" "WebServer" {
+  ami           = var.WebServerAmiId
+  instance_type = var.WebServerInstanceType
+  subnet_id     = aws_subnet.WebServerPublicSubnet.id
+  key_name      = aws_key_pair.WebServerRouteKeyPair.key_name
+  user_data = <<-EOF
+              #!/bin/bash
+              yum update -y
+              yum install -y httpd
+              systemctl start httpd
+              systemctl enable httpd
+              echo "<h1>Hello from Web Server provisioned by Terraform</h1>" > /var/www/html/index.html
+              EOF
+}
