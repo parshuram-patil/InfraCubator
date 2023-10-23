@@ -18,3 +18,7 @@ resource "aws_subnet" "WebServerPublicSubnet" {
     Name = "WebServerPublicSubnet"
   })
 }
+
+resource "aws_internet_gateway" "WebServerInternetGateway" {
+  vpc_id = aws_vpc.WebServerVPC.id
+}
