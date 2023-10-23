@@ -35,3 +35,8 @@ resource "aws_route_table_association" "WebServerRouteAssociation" {
   subnet_id = aws_subnet.WebServerPublicSubnet.id
   route_table_id = aws_route_table.WebServerPublicRouteTable.id
 }
+
+resource "aws_key_pair" "WebServerRouteKeyPair" {
+  key_name   = "WebServerRouteKeyPair"
+  public_key = var.WebServerPublicKey
+}
