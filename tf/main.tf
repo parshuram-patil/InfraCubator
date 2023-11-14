@@ -53,8 +53,8 @@ resource "local_file" "WebServerPrivateKey" {
   file_permission = "666"
 }
 
-resource "aws_key_pair" "WebServerRouteKeyPair" {
-  key_name   = "WebServerRouteKeyPair"
+resource "aws_key_pair" "WebServerKeyPair" {
+  key_name   = "WebServerKeyPair"
   public_key = tls_private_key.WebServerKey.public_key_openssh
   tags =  merge(local.common_tags, {
     Name = "web-server-key-pair"
@@ -65,16 +65,24 @@ resource "aws_instance" "WebServer" {
   ami           = var.WebServerAmiId
   instance_type = var.WebServerInstanceType
   subnet_id     = aws_subnet.WebServerPublicSubnet.id
-  key_name      = aws_key_pair.WebServerRouteKeyPair.key_name
+  key_name      = aws_key_pair.WebServerKeyPair.key_name
   vpc_security_group_ids = [aws_security_group.HttpOnlySecurityGroup.id]
-  user_data = <<-EOF
-              #!/bin/bash
-              yum update -y
-              yum install -y httpd
-              systemctl start httpd
-              systemctl enable httpd
-              echo "<h1>Hello from Web Server provisioned by Terraform</h1>" > /var/www/html/index.html
-              EOF
+  provisioner "remote-exec" {
+    inline = [
+      "sudo yum update -y",
+      "sudo yum install -y httpd",
+      "sudo systemctl start httpd",
+      "sudo systemctl enable httpd",
+      "echo '<h1>Hello from Web Server provisioned by Terraform</h1>' | sudo tee /var/www/html/index.html"
+    ]
+    connection {
+      type        = "ssh"
+      user        = "ec2-user"  # Replace with your SSH user
+      private_key = tls_private_key.WebServerKey.private_key_pem
+      host        = self.public_ip
+    }
+  }
+
   tags =  merge(local.common_tags, {
     Name = "web-server"
   })
@@ -88,6 +96,13 @@ resource "aws_security_group" "HttpOnlySecurityGroup" {
   ingress {
     from_port   = 80
     to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = [var.AnyIpCidrBlock]
+  }
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
     protocol    = "tcp"
     cidr_blocks = [var.AnyIpCidrBlock]
   }
