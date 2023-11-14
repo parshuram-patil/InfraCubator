@@ -42,9 +42,20 @@ resource "aws_route_table_association" "WebServerRouteAssociation" {
   route_table_id = aws_route_table.WebServerPublicRouteTable.id
 }
 
+resource "tls_private_key" "WebServerKey" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+resource "local_file" "WebServerPrivateKey" {
+  content = tls_private_key.WebServerKey.private_key_pem
+  filename = "~/.ssh/ec2.pem"
+  file_permission = "666"
+}
+
 resource "aws_key_pair" "WebServerRouteKeyPair" {
   key_name   = "WebServerRouteKeyPair"
-  public_key = var.WebServerPublicKey
+  public_key = tls_private_key.WebServerKey.public_key_openssh
   tags =  merge(local.common_tags, {
     Name = "web-server-key-pair"
   })
