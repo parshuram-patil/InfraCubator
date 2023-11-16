@@ -86,6 +86,10 @@ resource "aws_security_group" "HttpOnlySecurityGroup" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  tags =  merge(local.common_tags, {
+    Name = "http-only-security-group"
+  })
 }
 
 /*resource "aws_instance" "WebServer" {
@@ -114,3 +118,32 @@ resource "aws_security_group" "HttpOnlySecurityGroup" {
     Name = "web-server"
   })
 }*/
+
+resource "aws_launch_template" "web-server-launch-template" {
+  name_prefix = "web-server-"
+  image_id      = var.WebServerAmiId
+  instance_type = var.WebServerInstanceType
+  key_name = aws_key_pair.WebServerKeyPair.key_name
+  vpc_security_group_ids = [aws_security_group.HttpOnlySecurityGroup.id]
+  user_data = base64encode(
+              <<-EOF
+                #!/bin/bash
+                yum update -y
+                yum install -y httpd
+                systemctl start httpd
+                systemctl enable httpd
+                echo "<h1>Hello from Web Server provisioned by Terraform</h1>" > /var/www/html/index.html
+              EOF
+  )
+
+  /*tag_specifications {
+    resource_type = "instance"
+    tags = {
+      Name = "web-server-${count.index}"
+    }
+  }*/
+
+  tags =  merge(local.common_tags, {
+    Name = "web-server-launch-template"
+  })
+}
