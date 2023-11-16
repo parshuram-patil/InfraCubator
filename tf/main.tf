@@ -188,3 +188,27 @@ resource "aws_autoscaling_policy" "web-server-scale-in-policy" {
   cooldown              = 300
   autoscaling_group_name = aws_autoscaling_group.web-server-auto-scaling-grp.name
 }
+
+resource "aws_cloudwatch_metric_alarm" "web-server-high-cpu-utilization" {
+  alarm_name          = "web-server-high-cpu-utilization-alarm"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = "2"
+  metric_name         = "CPUUtilization"
+  namespace           = "AWS/EC2"
+  period              = "300"
+  statistic           = "Average"
+  threshold           = "80"
+  alarm_actions       = [aws_autoscaling_policy.web-server-scale-out-policy.arn]
+}
+
+resource "aws_cloudwatch_metric_alarm" "web-server-low-cpu-utilization" {
+  alarm_name          = "web-server-low-cpu-utilization-alarm"
+  comparison_operator = "LessThanOrEqualToThreshold"
+  evaluation_periods  = "2"
+  metric_name         = "CPUUtilization"
+  namespace           = "AWS/EC2"
+  period              = "300"
+  statistic           = "Average"
+  threshold           = "20"
+  alarm_actions       = [aws_autoscaling_policy.web-server-scale-in-policy.arn]
+}
