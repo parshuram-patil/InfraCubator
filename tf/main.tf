@@ -147,3 +147,26 @@ resource "aws_launch_template" "web-server-launch-template" {
     Name = "web-server-launch-template"
   })
 }
+
+resource "aws_autoscaling_group" "web-server-auto-scaling-grp" {
+  name_prefix = "web-server-"
+  max_size             = var.WebServerMaxSize
+  min_size             = var.WebServerMinSize
+  desired_capacity     = var.WebServerDesiredCapacity
+  vpc_zone_identifier = [aws_subnet.WebServerPublicSubnet.id]
+
+  launch_template {
+    id      = aws_launch_template.web-server-launch-template.id
+    version = "$Latest"
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+
+  tag {
+    propagate_at_launch = true
+    key                 = "Name"
+    value               = "web-server"
+  }
+}

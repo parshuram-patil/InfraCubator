@@ -38,3 +38,15 @@ variable "WebServerPublicSubnetCidrBlock" {
   default = "10.0.1.0/24"
   description = "CIDR block that reserves 256 from 10.0.1.0 to 10.0.1.255"
 }
+
+variable "WebServerMaxSize" {
+  default = 3
+}
+
+variable "WebServerMinSize" {
+  default = 2
+}
+
+variable "WebServerDesiredCapacity" {
+  default = 2
+}
