@@ -212,3 +212,24 @@ resource "aws_cloudwatch_metric_alarm" "web-server-low-cpu-utilization" {
   threshold           = "20"
   alarm_actions       = [aws_autoscaling_policy.web-server-scale-in-policy.arn]
 }
+
+resource "aws_route53_zone" "web-server-domain" {
+  name = "${var.SubDomainName}.${var.DomainName}"
+  comment = "Sub domain of ${var.DomainName}"
+}
+
+resource "aws_route53_record" "web-server-dns" {
+  name    = "www"
+  type    = "A"
+  zone_id = aws_route53_zone.web-server-domain.zone_id
+  ttl = "300"
+  records = data.aws_instances.web-server-instances.public_ips
+}
+
+resource "aws_route53_record" "web-server-sub-domain" {
+  name    = var.SubDomainName
+  type    = "NS"
+  zone_id = var.ParentDomainZoneId
+  ttl = "300"
+  records = aws_route53_zone.web-server-domain.name_servers
+}

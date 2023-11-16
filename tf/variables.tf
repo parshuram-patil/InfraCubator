@@ -50,3 +50,18 @@ variable "WebServerMinSize" {
 variable "WebServerDesiredCapacity" {
   default = 2
 }
+
+variable "ParentDomainZoneId" {
+  default = "XXX"
+  description = "Zone id of existing domain, under this we will create sun domain"
+}
+
+variable "DomainName" {
+  default = "XXX"
+  description = "Registered Domain Name"
+}
+
+variable "SubDomainName" {
+  default = "webserver"
+  description = "Sub Domain Name"
+}
