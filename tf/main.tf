@@ -170,3 +170,21 @@ resource "aws_autoscaling_group" "web-server-auto-scaling-grp" {
     value               = "web-server"
   }
 }
+
+resource "aws_autoscaling_policy" "web-server-scale-out-policy" {
+  name                   = "web-server-scale-out-policy"
+  scaling_adjustment = 1
+  adjustment_type = "ChangeInCapacity"
+  policy_type = "SimpleScaling"
+  cooldown = 300
+  autoscaling_group_name = aws_autoscaling_group.web-server-auto-scaling-grp.name
+}
+
+resource "aws_autoscaling_policy" "web-server-scale-in-policy" {
+  name                   = "web-server-scale-in-policy"
+  scaling_adjustment    = -1
+  adjustment_type       = "ChangeInCapacity"
+  policy_type           = "SimpleScaling"
+  cooldown              = 300
+  autoscaling_group_name = aws_autoscaling_group.web-server-auto-scaling-grp.name
+}
