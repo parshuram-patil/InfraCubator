@@ -41,24 +41,22 @@ variable "WebServerPublicSubnetCidrBlock" {
 
 variable "WebServerMaxSize" {
   default = 3
+  description = "Max no. of Web Server instances"
 }
 
 variable "WebServerMinSize" {
   default = 2
+  description = "Min no. of Web Server instances"
 }
 
 variable "WebServerDesiredCapacity" {
   default = 2
+  description = "Desired capacity of Web Servers"
 }
 
 variable "ParentDomainZoneId" {
   default     = "XXX"
-  description = "Zone id of existing domain, under this we will create sun domain"
-}
-
-variable "DomainName" {
-  default     = "XXX"
-  description = "Registered Domain Name"
+  description = "Zone id of existing domain, under this sub domain will be created"
 }
 
 variable "SubDomainName" {

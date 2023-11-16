@@ -203,19 +203,20 @@ resource "aws_cloudwatch_metric_alarm" "web-server-low-cpu-utilization" {
 }
 
 resource "aws_route53_zone" "web-server-domain" {
-  name    = "${var.SubDomainName}.${var.DomainName}"
-  comment = "Sub domain of ${var.DomainName}"
+  name    = "${var.SubDomainName}.${data.aws_route53_zone.parent-zone.name}"
+  comment = "Sub domain of ${data.aws_route53_zone.parent-zone.name}"
 }
 
-resource "aws_route53_record" "web-server-dns" {
+resource "aws_route53_record" "web-server-a-record" {
   name    = "www"
   type    = "A"
   zone_id = aws_route53_zone.web-server-domain.zone_id
   ttl     = "300"
   records = data.aws_instances.web-server-instances.public_ips
+#  records = [data.aws_instances.web-server-instances.public_ips[0]]
 }
 
-resource "aws_route53_record" "web-server-sub-domain" {
+resource "aws_route53_record" "web-server-ns-record" {
   name    = var.SubDomainName
   type    = "NS"
   zone_id = var.ParentDomainZoneId

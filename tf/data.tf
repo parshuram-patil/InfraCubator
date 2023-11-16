@@ -9,3 +9,7 @@ data "aws_instances" "web-server-instances" {
 
   instance_state_names = ["running"]
 }
+
+data "aws_route53_zone" "parent-zone" {
+  zone_id = var.ParentDomainZoneId
+}
