@@ -61,7 +61,34 @@ resource "aws_key_pair" "WebServerKeyPair" {
   })
 }
 
-resource "aws_instance" "WebServer" {
+resource "aws_security_group" "HttpOnlySecurityGroup" {
+  name        = "http-only-security-group"
+  description = "Security group that allows incoming HTTP traffic on port 80"
+
+  vpc_id = aws_vpc.WebServerVPC.id
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = [var.AnyIpCidrBlock]
+  }
+
+  /*ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = [var.AnyIpCidrBlock]
+  }*/
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+/*resource "aws_instance" "WebServer" {
   ami           = var.WebServerAmiId
   instance_type = var.WebServerInstanceType
   subnet_id     = aws_subnet.WebServerPublicSubnet.id
@@ -86,31 +113,4 @@ resource "aws_instance" "WebServer" {
   tags =  merge(local.common_tags, {
     Name = "web-server"
   })
-}
-
-resource "aws_security_group" "HttpOnlySecurityGroup" {
-  name        = "http-only-security-group"
-  description = "Security group that allows incoming HTTP traffic on port 80"
-
-  vpc_id = aws_vpc.WebServerVPC.id
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = [var.AnyIpCidrBlock]
-  }
-
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = [var.AnyIpCidrBlock]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
+}*/
